@@ -137,6 +137,52 @@ h2.section-title {
 
 .badge-common { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; background:var(--panel2); color:var(--text-dim); }
 
+/* Tutorial section */
+.tutorial-intro .note { background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.3); border-radius: 8px; padding: 10px 14px; font-size: 13px; }
+.actor-legend { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.actor {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .02em;
+  padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+}
+.actor-buyer { background: rgba(52,211,153,.15); color: var(--accent2); border: 1px solid rgba(52,211,153,.4); }
+.actor-seller { background: rgba(91,141,239,.15); color: var(--accent); border: 1px solid rgba(91,141,239,.4); }
+.actor-market { background: rgba(251,191,36,.15); color: var(--warn); border: 1px solid rgba(251,191,36,.4); }
+
+.flow-diagram { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+.flow-diagram-2 { flex-direction: column; align-items: flex-start; max-width: 360px; }
+.flow-box {
+  background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px;
+  font-size: 13px; font-weight: 600; color: #fff; text-align: center; flex: 1; min-width: 140px;
+}
+.flow-box small { display: block; font-weight: 400; color: var(--text-dim); margin-top: 4px; font-size: 11px; }
+.flow-box.flow-buyer { border-color: rgba(52,211,153,.4); }
+.flow-box.flow-seller { border-color: rgba(91,141,239,.4); }
+.flow-box.flow-market { border-color: rgba(251,191,36,.4); }
+.flow-arrow { font-size: 20px; color: var(--text-dim); }
+.flow-arrow-v { font-size: 13px; padding-left: 8px; }
+
+.tut-step { display: flex; gap: 14px; margin: 16px 0; }
+.tut-step-num {
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--panel2);
+  border: 1px solid var(--border); color: var(--accent); font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+}
+.tut-step-body { flex: 1; min-width: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; }
+.tut-step-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.tut-step-head h4 { margin: 0; font-size: 14.5px; color: #fff; }
+.tut-step-content { font-size: 13px; color: var(--text-dim); }
+.tut-step-content ul { margin: 6px 0; padding-left: 20px; }
+.tut-step-content li { margin: 4px 0; }
+.step-api-link {
+  display: inline-block; font-size: 12.5px; color: var(--text); background: var(--code-bg);
+  border: 1px solid var(--border); border-radius: 5px; padding: 1px 8px; margin: 1px 0;
+}
+.step-api-link code { color: var(--accent2); }
+.step-api-link:hover { border-color: var(--accent); }
+
+.checklist { list-style: none; padding-left: 0; }
+.checklist li { padding: 5px 0; font-size: 13px; color: var(--text); }
+
 #topbtn {
   position: fixed; right: 24px; bottom: 24px; width: 42px; height: 42px; border-radius: 50%;
   background: var(--accent); color: #fff; border: none; font-size: 18px; cursor: pointer; display: none;
@@ -169,6 +215,7 @@ h2.section-title {
     </div>
     <div class="nav-static">
       <a href="#overview">📘 Overview</a>
+      <a href="#tutorial-marketplace">🎓 Tutorial: Marketplace</a>
       <a href="#common-info">⚙️ Common Info</a>
       <a href="#response-codes">🚦 Response Codes</a>
       <a href="#update-history">🕒 Update History</a>
@@ -217,6 +264,213 @@ h2.section-title {
         <li>Xem mục <a href="#response-codes">Response Codes</a> để tra cứu mã lỗi trả về.</li>
       </ul>
     </div>
+
+    <h2 class="section-title" id="tutorial-marketplace">🎓 Tutorial: Tích hợp Marketplace (Buyer / Seller / Sàn)</h2>
+    
+  <div class="top-card tutorial-intro">
+    <h3>🎓 Tutorial: Tích hợp API cho mô hình Marketplace (Sàn giao dịch)</h3>
+    <p>Hướng dẫn này dành cho dev tích hợp InfoCMS OpenAPI vào một <strong>sàn thương mại điện tử / marketplace</strong> có 3 bên tham gia:</p>
+    <div class="actor-legend">
+      <span class="actor actor-buyer">BÊN MUA (Buyer)</span>
+      <span class="actor actor-seller">BÊN BÁN (Seller)</span>
+      <span class="actor actor-market">SÀN (Marketplace)</span>
+    </div>
+    <p class="note">⚠ Chỉ có <strong>Sàn</strong> là bên ký hợp đồng CMS và gọi trực tiếp InfoCMS OpenAPI (đóng vai trò "Customer" trong tài liệu). Buyer và Seller chỉ tương tác qua app/web của Sàn — Sàn chịu trách nhiệm giữ tiền tạm (escrow) và giải ngân.</p>
+  </div>
+
+  <div class="top-card">
+    <h3>Sơ đồ luồng tổng quan</h3>
+    <div class="flow-diagram">
+      <div class="flow-box flow-buyer">Buyer<br><small>đặt hàng &amp; thanh toán</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box flow-market">Sàn (InfoCMS Customer)<br><small>thu hộ, giữ tiền, đối soát</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box flow-seller">Seller<br><small>nhận tiền giải ngân</small></div>
+    </div>
+    <div class="flow-diagram flow-diagram-2">
+      <div class="flow-box flow-market">InfoCMS OpenAPI</div>
+      <div class="flow-arrow flow-arrow-v">⇅ HTTPS + PGP + HMAC</div>
+      <div class="flow-box flow-market">Backend của Sàn</div>
+    </div>
+  </div>
+
+  <h3 class="block-h">Bước 0 — Chuẩn bị &amp; Xác thực</h3>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">0</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-market">SÀN (Marketplace)</span><h4>Đăng ký hợp đồng &amp;amp; cấu hình bảo mật</h4></div>
+      <div class="tut-step-content">
+    <ul>
+      <li>Ký hợp đồng CMS với ngân hàng/InfoCMS, nhận <code>masterId</code>, <code>clientId</code>, <code>clientSecret</code>.</li>
+      <li>Trao đổi OpenPGP public key để mã hoá/giải mã field <code>data</code>, cấu hình RSA signing cho header <code>CMS-RSA-Signature</code> (xem mục <a href="#common-info">Common Info</a>).</li>
+      <li>Whitelist IP server của Sàn theo mã lỗi <code>S00005</code> (IP Address Not Allowed) trong <a href="#response-codes">Response Codes</a>.</li>
+    </ul>
+  </div>
+    </div>
+  </div>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">1</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-market">SÀN (Marketplace)</span><h4>Đăng nhập lấy access token</h4></div>
+      <div class="tut-step-content">
+    <p>Gọi <a class="step-api-link" href="#api-login"><code>login</code> — login</a> với <code>masterId</code> + <code>clientId</code> để lấy <code>accessToken</code> (hết hạn 30 phút) và <code>refreshIdx</code> (hết hạn 24h).</p>
+    <p>Khi token hết hạn, gọi <a class="step-api-link" href="#api-refresh"><code>refresh</code> — refresh</a> để cấp lại <code>accessToken</code> mới mà không cần đăng nhập lại. Nên cache token và tự động refresh trước khi hết hạn.</p>
+  </div>
+    </div>
+  </div>
+
+  <h3 class="block-h">Bước 1 — Onboarding người bán (Seller)</h3>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">2</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-seller">BÊN BÁN (Seller)</span><h4>Đăng ký hồ sơ &amp;amp; tài khoản nhận tiền</h4></div>
+      <div class="tut-step-content">
+    <p>Khi Seller đăng ký gian hàng trên Sàn, backend Sàn gọi:</p>
+    <ul>
+      <li><a class="step-api-link" href="#api-inquiryBankCode"><code>inquiryBankCode</code> — inquiry bank code list</a> — lấy danh sách ngân hàng để Seller chọn.</li>
+      <li><a class="step-api-link" href="#api-inquiryAccntName"><code>inquiryAccntName</code> — inquiry account info</a> — xác minh số tài khoản + tên chủ tài khoản Seller nhập có khớp ngân hàng không, tránh giải ngân nhầm.</li>
+      <li><a class="step-api-link" href="#api-createPayer"><code>createPayer</code> — createPayer</a> (hoặc bản v3: <a class="step-api-link" href="#api-createPayer-V3"><code>createPayer(V3)</code> — createPayer(V3)</a>) — tạo hồ sơ "payer" đại diện Seller trong CMS để dùng cho các bước thu/chi sau này.</li>
+    </ul>
+    <p>Dùng <a class="step-api-link" href="#api-inquiryPayer"><code>inquiryPayer</code> — inquiryPayer</a> / <a class="step-api-link" href="#api-updatePayer"><code>updatePayer</code> — updatePayer</a> / <a class="step-api-link" href="#api-deletePayer"><code>deletePayer</code> — deletePayer</a> để tra cứu, cập nhật hoặc gỡ hồ sơ khi Seller đổi tài khoản hoặc ngừng bán.</p>
+  </div>
+    </div>
+  </div>
+
+  <h3 class="block-h">Bước 2 — Buyer thanh toán đơn hàng (Collect)</h3>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">3</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-market">SÀN (Marketplace)</span><h4>Sinh mã thu hộ / QR cho đơn hàng</h4></div>
+      <div class="tut-step-content">
+    <p>Khi Buyer bấm "Thanh toán", Sàn tạo một mã thu hộ gắn với đơn hàng (1 đơn = 1 mã, để đối soát chính xác từng đơn):</p>
+    <ul>
+      <li><a class="step-api-link" href="#api-createEccode"><code>createEccode</code> — createEccode</a> — tạo mã E-Collection (virtual account) cho đơn hàng.</li>
+      <li><a class="step-api-link" href="#api-createQr"><code>createQr</code> — createQr</a> hoặc <a class="step-api-link" href="#api-poCreateQr"><code>poCreateQr</code> — poCreateQr</a> (nếu thanh toán tại POS/vending) — sinh QR code động để Buyer quét bằng app ngân hàng.</li>
+      <li><a class="step-api-link" href="#api-mapEccode"><code>mapEccode</code> — mapEccode</a> — dùng khi cần map 1 mã thu hộ có sẵn với đơn hàng mới thay vì tạo mã mới.</li>
+    </ul>
+  </div>
+    </div>
+  </div>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">4</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-buyer">BÊN MUA (Buyer)</span><h4>Quét mã / chuyển khoản thanh toán</h4></div>
+      <div class="tut-step-content">
+    <p>Buyer mở app ngân hàng bất kỳ, quét QR hoặc chuyển khoản đúng nội dung tới mã thu hộ. Đây là hành động ngoài API (thực hiện phía ngân hàng của Buyer).</p>
+  </div>
+    </div>
+  </div>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">5</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-market">SÀN (Marketplace)</span><h4>Nhận callback xác nhận đã thanh toán</h4></div>
+      <div class="tut-step-content">
+    <p>InfoCMS chủ động gọi ngược (callback) về server Sàn khi tiền về:</p>
+    <ul>
+      <li><a class="step-api-link" href="#api-callbackEccodeTrans"><code>callbackEccodeTrans</code> — callbackEccodeTrans</a> — Sàn cần expose endpoint tiếp nhận callback này, xác thực chữ ký, rồi cập nhật trạng thái đơn hàng = "Đã thanh toán".</li>
+      <li><a class="step-api-link" href="#api-poCallbackEccodeTrans"><code>poCallbackEccodeTrans</code> — poCallbackEccodeTrans</a> — bản dành cho POS/vending machine.</li>
+    </ul>
+    <p>Để phòng trường hợp lỡ callback (mất mạng, downtime), nên có job định kỳ chủ động gọi:</p>
+    <ul>
+      <li><a class="step-api-link" href="#api-inquiryEccodeRecv"><code>inquiryEccodeRecv</code> — inquiryEccodeRecv</a> / <a class="step-api-link" href="#api-poInquiryEccodeRecv"><code>poInquiryEccodeRecv</code> — poInquiryEccodeRecv</a> — tra danh sách khoản thu theo mã.</li>
+      <li><a class="step-api-link" href="#api-inquiryEccodeTrans"><code>inquiryEccodeTrans</code> — inquiryEccodeTrans</a> / <a class="step-api-link" href="#api-inquiryEccodeTrans-v3"><code>inquiryEccodeTrans (v3)</code> — inquiryEccodeTrans (v3)</a> — tra chi tiết giao dịch đã nộp theo khoảng thời gian (paging), đối chiếu với đơn hàng chưa nhận callback.</li>
+    </ul>
+    <p>Nếu Buyer huỷ đơn trước khi thanh toán: gọi <a class="step-api-link" href="#api-poCancelQr"><code>poCancelQr</code> — poCancelQr</a> để huỷ mã QR đã tạo (POS flow).</p>
+  </div>
+    </div>
+  </div>
+
+  <h3 class="block-h">Bước 3 — Giữ tiền &amp; đối soát thu (Escrow)</h3>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">6</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-market">SÀN (Marketplace)</span><h4>Theo dõi số dư &amp;amp; đối soát cuối ngày</h4></div>
+      <div class="tut-step-content">
+    <ul>
+      <li><a class="step-api-link" href="#api-inquiryAccntBalance"><code>inquiryAccntBalance</code> — inquery account balance</a> — kiểm tra số dư tài khoản tổng (nơi tiền Buyer đổ về) trước khi lên kế hoạch giải ngân.</li>
+      <li><a class="step-api-link" href="#api-reconEccode"><code>reconEccode</code> — reconciliation for E-Collection Code transaction</a> — nhận file đối soát (theo ngày) toàn bộ giao dịch thu hộ, dùng để khớp với dữ liệu đơn hàng nội bộ, phát hiện chênh lệch.</li>
+    </ul>
+  </div>
+    </div>
+  </div>
+
+  <h3 class="block-h">Bước 4 — Giải ngân cho người bán (Payout / Settlement)</h3>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">7</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-market">SÀN (Marketplace)</span><h4>Tính hoa hồng &amp;amp; tạo lệnh chuyển tiền</h4></div>
+      <div class="tut-step-content">
+    <p>Sau khi đơn hàng hoàn tất (Buyer xác nhận nhận hàng / hết thời gian khiếu nại), Sàn tính: <code>số tiền giải ngân = tiền hàng − phí hoa hồng sàn</code>, rồi:</p>
+    <ul>
+      <li><a class="step-api-link" href="#api-inquiryCutoff"><code>inquiryCutoff</code> — inquery CUT OFF TIME (COT)</a> — kiểm tra khung giờ còn cho phép chuyển khoản trong ngày trước khi tạo lệnh.</li>
+      <li><a class="step-api-link" href="#api-transferSingle"><code>transferSingle</code> — single transfer</a> — chuyển tiền cho 1 Seller ngay khi đơn hoàn tất (giải ngân realtime từng đơn).</li>
+      <li><a class="step-api-link" href="#api-transferMulti"><code>transferMulti</code> — multi transfer</a> — chuyển hàng loạt cuối ngày cho nhiều Seller cùng lúc (batch payout), tối ưu khi số lượng đơn lớn.</li>
+    </ul>
+  </div>
+    </div>
+  </div>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">8</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-market">SÀN (Marketplace)</span><h4>Theo dõi kết quả chuyển tiền</h4></div>
+      <div class="tut-step-content">
+    <ul>
+      <li><a class="step-api-link" href="#api-inquiryTransferResult"><code>inquiryTransferResult</code> — inquiry transfer result</a> — tra kết quả 1 lệnh chuyển đơn lẻ.</li>
+      <li><a class="step-api-link" href="#api-callbackTransfer"><code>callbackTransfer</code> — callback multi transfer</a> — callback báo kết quả lô chuyển tiền (thành công/thất bại từng dòng) từ InfoCMS.</li>
+      <li><a class="step-api-link" href="#api-inquiryTransferHist"><code>inquiryTransferHist</code> — inquiry Transfer history</a> — tra lịch sử chuyển khoản phục vụ báo cáo/hỗ trợ khách hàng.</li>
+      <li><a class="step-api-link" href="#api-reconTransfer"><code>reconTransfer</code> — reconciliation for transfer transaction</a> — file đối soát chuyển khoản theo ngày, khớp với sổ nội bộ Sàn.</li>
+    </ul>
+    <p>Nếu chuyển thất bại (sai số tài khoản, ngân hàng lỗi...), Sàn cần giữ lại tiền và thử lại giải ngân cho Seller ở phiên sau, đồng thời thông báo Seller cập nhật lại tài khoản.</p>
+  </div>
+    </div>
+  </div>
+
+  <h3 class="block-h">Bước 5 — Thông báo cho các bên</h3>
+  
+  <div class="tut-step">
+    <div class="tut-step-num">9</div>
+    <div class="tut-step-body">
+      <div class="tut-step-head"><span class="actor actor-market">SÀN (Marketplace)</span><h4>Gửi thông báo trạng thái</h4></div>
+      <div class="tut-step-content">
+    <p>Dùng <a class="step-api-link" href="#api-createNoti"><code>createNoti</code> — createNoti</a> / <a class="step-api-link" href="#api-inquiryNoti"><code>inquiryNoti</code> — inquiryNoti</a> để Sàn gửi và tra cứu thông báo (ví dụ: "Đơn hàng đã thanh toán", "Tiền đã giải ngân") cho Buyer/Seller qua kênh nội bộ của Sàn.</p>
+  </div>
+    </div>
+  </div>
+
+  <div class="top-card">
+    <h3>Lưu ý bảo mật &amp; vận hành</h3>
+    <ul>
+      <li><strong>Idempotency:</strong> luôn sinh <code>requesterTrId</code> duy nhất cho mỗi request để tránh xử lý trùng khi retry.</li>
+      <li><strong>Mã hoá:</strong> toàn bộ field <code>data</code> phải mã hoá PGP + Base64, ký RSA-SHA256 theo mục <a href="#common-info">Common Info</a>.</li>
+      <li><strong>Timeout:</strong> connect timeout 3s, response timeout 10s — cần có cơ chế retry/backoff và idempotency key phù hợp.</li>
+      <li><strong>Đối soát định kỳ</strong> (reconEccode/reconTransfer/reconAutocol) là bắt buộc để phát hiện lệch dữ liệu do lỡ callback hoặc lỗi mạng.</li>
+      <li>Tra mã lỗi trả về tại mục <a href="#response-codes">Response Codes</a> để xử lý hiển thị lỗi phù hợp cho Buyer/Seller.</li>
+    </ul>
+  </div>
+
+  <div class="top-card">
+    <h3>✅ Checklist tích hợp nhanh</h3>
+    <ul class="checklist">
+      <li>☐ Ký hợp đồng CMS, nhận clientId/clientSecret, cấu hình PGP key + whitelist IP</li>
+      <li>☐ Auth: login + tự động refresh token</li>
+      <li>☐ Onboarding Seller: xác minh tài khoản ngân hàng + createPayer</li>
+      <li>☐ Checkout: createEccode/createQr + xử lý callbackEccodeTrans</li>
+      <li>☐ Job đối soát thu định kỳ (inquiryEccodeTrans, reconEccode)</li>
+      <li>☐ Payout: transferSingle/transferMulti + callbackTransfer</li>
+      <li>☐ Job đối soát chi định kỳ (inquiryTransferHist, reconTransfer)</li>
+      <li>☐ Notification cho Buyer/Seller</li>
+      <li>☐ Xử lý đầy đủ Response Codes &amp; retry/idempotency</li>
+    </ul>
+  </div>
 
     <div class="top-card" id="common-info">
       <h3>⚙️ Common Info (Connection / Environment)</h3>
